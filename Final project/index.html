@@ -31,40 +31,25 @@
         
     </head>
     <body>
-        <!-- <header> <h2> Against Asian American Hate  </h2></header> -->
-        <!-- <theheader><h2>Against Asian Hate</h2> <button id="myBtn"> Click Here to Share Your Story! </button>        <a href="https://github.com/rachan2023/21S-191A-Against-Asian-Hate/blob/main/README.md"><button>About The Project</button></a>
-        </theheader> -->
         <div id="map"></div> 
-        <div id="theHeader"><h2>Against Asian Hate</h2> <div>
-            <button id="myBtn" onclick='startModal()'> Click Here to Share Your Story! </button> 
-        </div>   
-        <div>
-            <a href="about.html"><button>About the Against Asian Hate Project</button></a>
-        </div>   
-
-        <div id="recenter">
-            <button id='recenter_btn' onclick="recenter()"> Recenter </button>
-        </div>
+        <div id="theHeader"><h2>Against Asian Hate</h2> 
+            <div>
+                <button id='recenter' onclick="recenter()"> Recenter </button>
+            </div>
+            <div>
+                <button id="myBtn" onclick='startModal()'> Click Here to Share Your Story! </button> 
+            </div>   
+            <div>
+                <a href="about.html"><button>About the Against Asian Hate Project</button></a>
+            </div>   
         </div>  
-        <!-- <div id="survey"> -->
-        <!-- this is the iframe for our survey -->
-            <!-- <iframe width="640px" height= "480px" src= "https://forms.office.com/Pages/ResponsePage.aspx?id=oCI8t5lRfEaZh-gKKc_PzzQmZK6zAABOhTEbC6ytzpBUQ1BQQlJVVk9STDFOV1lRT0JETEhOSkRHWi4u&embed=true" frameborder= "0" marginwidth= "0" marginheight= "0" style= "border: none; max-width:100%; max-height:100vh" allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen> </iframe>
-        </div> -->
         <div id = "contents"></div>
+        <div id='filter'> filter </div>
+
         <script src="js/init.js"></script>
         
          <!-- Trigger/Open The Modal -->
         <button id="myBtn" style="display:none"> Click Here to Share Your Story! </button>
-        <!-- <button id="Aboutbtn" onclick="myFunction()">About The Project!</button> -->
-        <!-- <button onclick="window.location='https://github.com/rachan2023/21S-191A-Against-Asian-Hate/blob/main/README.md';">About The Project</button> -->
-
-        
-        <!-- <button id="Aboutbtn"> About </button> -->
-        <!-- <button id= "turnOff59"> <i style="background: green; border-radius: 50%;"></i> Under 59 years old </button> -->
-        <!-- <button id= "turnOff59"> <i style="background: red; border-radius: 50%;"></i> 60-64 years old</button>
-        <button id= "turnOff59"> <i style="background: blue; border-radius: 50%;"></i> 65-69 years old</button>
-        <button id= "turnOff59"> <i style="background: purple; border-radius: 50%;"></i> Over 70 years old</button> -->
-        <!-- The Modal -->
         <div id="myModal" class="modal">
 
             <!-- Modal content -->
@@ -75,19 +60,10 @@
                 </div>
                 
                 <div class="modal-body">
-                    <!-- <button type="button" class="btn btn-default" data-dismiss="modal" onclick="document.location='https://forms.office.com/Pages/ResponsePage.aspx?id=oCI8t5lRfEaZh-gKKc_PzzQmZK6zAABOhTEbC6ytzpBUQ1BQQlJVVk9STDFOV1lRT0JETEhOSkRHWi4u'"> English </button> -->
-                    <!-- <button onclick="document.location='https://forms.office.com/Pages/ResponsePage.aspx?id=oCI8t5lRfEaZh-gKKc_PzzQmZK6zAABOhTEbC6ytzpBUQ1BQQlJVVk9STDFOV1lRT0JETEhOSkRHWi4u'">HTML Tutorial</button> -->
-                    <!-- <button type="button" class="btn btn-default" data-dismiss="modal" onclick="document.location='https://forms.office.com/Pages/ResponsePage.aspx?id=oCI8t5lRfEaZh-gKKc_PzzQmZK6zAABOhTEbC6ytzpBUQ1BQQlJVVk9STDFOV1lRT0JETEhOSkRHWi4u&lang=zh-cn'"> 中文 </button>  -->
                     <p> With the onset of the COVID-19 pandemic, there has been a recent spike in Asian American hate crimes especially in the United States. We seek to document those instances of Asian American hate crimes in California, specifically focusing on Asian American elderly and women. The goal is to shine light on this epidemic of violence, abuse, and injustice towards elderly and women of Asian Pacific Island background. In the long-term, we hope that this platform will be used by community members to share their stories and feelings without any repercussions. </p>
                     <p> 随着COVID-19大流行的爆发，最近美国亚裔的仇恨犯罪事件数量继续上升。我们力求记录在加利福尼亚州发生的美国亚裔仇恨犯罪事件，特别是针对亚裔老人与妇女。目的是阐明这种对亚太岛屿背景的老年人和妇女的暴力，虐待和不公正现象。从长远来看，我们希望社区成员可以使用该平台来分享他们的故事和感受，而不会造成任何影响。</p>
                 </div>
-                <!-- Button doesn't work :( -->
                 <div class="modal-footer">
-                    <!-- <button type="button" class="btn btn-default" data-dismiss="modal"> Proceed to English</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal"> 
-                        继续中文</button>
-                        <a href="index.html"> Index </a> 
-                        <a href="about.html"> About </a>  -->
                      <button type="button" class="btn btn-default" onclick="document.getElementById('myModal').style.display='none'"> Proceed to English </button> 
                      <button type="button" class="btn btn-default" data-dismiss="modal" onclick="document.location= 'Chinese.html'"> 进入中文版 </button> 
                      <button type="button" class="btn btn-default" onclick="document.getElementById('myModal').style.display='none'" >Close</button>

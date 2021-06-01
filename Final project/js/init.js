@@ -155,8 +155,8 @@ let allLayers;
 let testLayer;
 
 //if i change from local to session storage, the popup will come up every time ?
-let lastVisited = window.localStorage.getItem('last visited');
-
+//let lastVisited = window.localStorage.getItem('last visited');
+let lastVisited = 'false';
 function formatData(theData){
         const formattedData = [] /* this arry will eventually be populated with the contents of the spreadsheet's rows */
         const rows = theData.feed.entry
