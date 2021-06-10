@@ -369,6 +369,8 @@ function createButtons(lat,lng,data){
     spaceForButtons.appendChild(newDiv);//this adds the button to our page.
 }
 
+// let total_stories = document.getElementById('contents').children;
+
 let allLayers;
 let testLayer;
 
@@ -461,8 +463,6 @@ function startModal() {
     document.getElementById("myBtn").onclick = function() {
         modal.style.display = "block";};
     
-
-    
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
       modal.style.display = "none";
@@ -519,4 +519,5 @@ function prev() {
 }
 // setup resize event for scrollama incase someone wants to resize the page...
 window.addEventListener("resize", scroller.resize);
+
 

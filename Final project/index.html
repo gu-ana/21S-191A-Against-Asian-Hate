@@ -32,9 +32,6 @@
 
         <script src='https://unpkg.com/@turf/turf@6.3.0/turf.min.js'></script>
 
-        <!-- bring in tagcloud -->
-        <script type="text/javascript" src="js/TagCloud.min.js"></script> 
-
         <link rel="stylesheet" type="text/css" href="slick/slick.css"/>
      
         <link rel="stylesheet" type="text/css" href="slick/slick-theme.css"/>
@@ -99,7 +96,7 @@
                         <button onclick='search()'> Search </button>
                     </div>     
             </div>
-            <!-- <div class='story_wrapper'>
+            <div class='story_wrapper'>
                 
                 <a href="#" onclick='prev()' class="previous">&laquo; Previous</a>
                 <a href="#" class="next" onclick='next()'>Next &raquo;</a>
@@ -107,9 +104,13 @@
                 <div id='contents'>
                 </div>
                 
-            </div> -->
+            </div>
             <div>
-                <canvas id='foo'></canvas>
+                <canvas id='North'></canvas>
+            </div>
+
+            <div>
+                <canvas id='South'></canvas>
             </div>
             
             <script src="js/gauge.js"></script>
