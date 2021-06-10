@@ -303,7 +303,7 @@ function addMarker(thisData){
         circleOptions.fillColor = colorArray[myFieldArray.indexOf(surveyData.age)]
         // console.log("age")
         // console.log(data.age)
-        let popUp = `<h2>${surveyData.gender} ${surveyData.city}  ${surveyData.zip} </h2>`
+        let popUp = `<h2>${surveyData.gender} </h2> <p>${surveyData.city}  ${surveyData.zip} </p>`
         // addImage(surveyData.lat,surveyData.lng,surveyData.age,surveyData.gender)
 
         var marker1 = L.circleMarker([surveyData.lat,surveyData.lng],circleOptions).bindPopup(popUp)
