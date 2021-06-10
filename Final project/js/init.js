@@ -1,12 +1,18 @@
-const map = L.map('map').setView([34.0709, -118.444], 5);
 
-// let CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+// import stopwords from "./stopwords.js"
+// import 'leaflet-swoopy';
+
+const map = L.map('map');
+ 
+// create leaflet map ...
+
+// let CartoDB_PositronNoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
 // 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
 // 	subdomains: 'abcd',
 // 	maxZoom: 19
 // });
 
-// CartoDB_Positron.addTo(map)
+// CartoDB_PositronNoLabels.addTo(map)
 
 let Esri_WorldGrayCanvas = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
 	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
@@ -14,10 +20,14 @@ let Esri_WorldGrayCanvas = L.tileLayer('https://server.arcgisonline.com/ArcGIS/r
 });
 
 Esri_WorldGrayCanvas.addTo(map)
+
+
+
+
+
 // create a new global scoped variable called 'scroller'
 // you can think of this like the "map" with leaflet (i.e. const map = L.map('map'))
 let scroller = scrollama();
-
 
 //marker cluster group 
 let mcg = L.markerClusterGroup({
@@ -52,6 +62,24 @@ let circleOptions = {
 }
 
 let boundaryLayer = "./data/CA_boundaries.geojson"
+
+function countiesF() {
+    // have the map show counties that are fearful
+}
+
+// function toggleBoundaries(flag){
+//     if (flag == "zip"){
+//     boundaryLayer = "./data/counties.geojson"
+//     getBoundary(boundaryLayer)
+//     }
+//     if (flag == "counties"){
+//         boundaryLayer = "./data/zipcode.geojson"
+//         getBoundary(boundaryLayer)
+//     }
+//     else{
+
+//     }
+// }
 
 let boundary;
 let ptsWithin;
@@ -190,7 +218,7 @@ function onEachFeature(feature, layer) {
 
 // Next steps --> zoom on click (to bay (or where most are responding))
 let regionColors = {
-    'SoCal': "orangered", 
+    'SoCal': "blue", 
     'NorCal': "green"
 }
 
@@ -260,6 +288,10 @@ function getBoundary2(layer){
     )   
 }
 
+// Step 1: Filter by Yes/No Fear
+// Step 2: in that region who said fear who said not fear
+// Optional Step 2: get stories to show up in div
+
 let myFieldArray = []
 
 function getDistinctValues(targetField){
@@ -273,13 +305,45 @@ function getDistinctValues(targetField){
 }
 
 function recenter() {
-    map.flyTo([34.0709, -118.444], 5 ,{
-        pan: {
-            animate: false,
-            duration: 0.1
-        }
-    });
+    // map.flyTo([37.5, -119.1], 6 ,{
+    //     pan: {
+    //         animate: true,
+    //         duration: 0.1
+    //     }
+    // });
+    flag = 1
+    toggleLegend(flag)
+    flag = 0
+    
+    getBoundary2(boundaryLayer)
 }
+
+
+// function addImage(lat, lng, age, gender){
+//     // switch(title){
+//     //     case 'Los Angeles, CA': img = './pictures/UCLA.jpg';
+//     //         break;
+//     //     case 'West Lafayette, IN': img = './pictures/Purdue.jpg';
+//     //         break;
+//     //     case 'Houston, TX': img = './pictures/Houston.jpg';
+//     //         break;
+//     // }
+
+//     if(age == "under 59" && gender == "Woman") {
+//         img = './pictures/woman.png'
+//     }
+
+//     else if (age != "under 59" && gender == "Woman") {
+//         img = './pictures/elderly_woman.jpg'
+//     }
+
+//     else {
+//         img = './pictures/man.png'
+//     }
+
+//     L.popup().setLatLng([lat, lng]).setContent('<img src=' + img + ' width=105 height=105/><p>').openOn(map);
+    
+// }
 
 function addMarker(thisData){
         // let story = data.ifpossiblepleaseelaborateaboutwhyyouarefearful.
@@ -303,7 +367,7 @@ function addMarker(thisData){
             theStory = "Story not provided."
         }
         // console.log(theStory)
-        let data = {
+        let surveyData = {
             ['zip']: thisData.zipcode,
             ['city']: thisData.whatcitydoyouorthepersonyouarerepresentingcurrentlylivein,
             ['age']: thisData.howoldareyouorthepersonyouarerepresenting,
@@ -317,28 +381,48 @@ function addMarker(thisData){
 
         }
         // console.log(data)
-        createButtons(data.lat,data.lng, data)
-        getDistinctValues(data.age)
+        // createButtons(surveyData.lat,surveyData.lng, surveyData)
+        getDistinctValues(surveyData.age)
+        let fear = thisData.areyoufearfulofgoingoutsideduetotheriseofasianamericanhatecrimes
+        let thisPoint = turf.point([Number(surveyData.lng),Number(surveyData.lat)],{surveyData})
+        // console.log('thisPoint')
+        // console.log(thisPoint.properties.data)
+        allPoints.push(thisPoint)
+
+        // console.log('all the distinct fields')
+        // console.log(myFieldArray)
         colorArray = ['green','blue','red','purple']
-        circleOptions.fillColor = colorArray[myFieldArray.indexOf(data.age)]
+        circleOptions.fillColor = colorArray[myFieldArray.indexOf(surveyData.age)]
         // console.log("age")
         // console.log(data.age)
-        let popUp = `<h2>${data.city}</h2><h4> ${data.zip} </h4> `
-        if (data.age == "under 59"){         
-            under59.addLayer(L.circleMarker([data.lat,data.lng],circleOptions).bindPopup(popUp))
-            return data.timestamp
+        let popUp = `<h2>${surveyData.gender}</h2>`
+        // addImage(surveyData.lat,surveyData.lng,surveyData.age,surveyData.gender)
+
+        var marker1 = L.circleMarker([surveyData.lat,surveyData.lng],circleOptions).bindPopup(popUp)
+         
+        marker1.on('mouseover', function (e) {
+            this.openPopup();
+        });
+
+        if (surveyData.age == "under 59"){         
+            under59.addLayer(marker1)
+            // addImage(surveyData.lat,surveyData.lng,surveyData.age,surveyData.gender)
+            return surveyData.timestamp
         }
-        else if (data.age == "60-64") {
-            sixtyfour.addLayer(L.circleMarker([data.lat,data.lng],circleOptions).bindPopup(popUp))
+        else if (surveyData.age == "60-64") {
+            sixtyfour.addLayer(marker1)
+            // addImage(surveyData.lat,surveyData.lng,surveyData.age,surveyData.gender)
         }
-        else if (data.age == "65-69") {
-            sixtynine.addLayer(L.circleMarker([data.lat,data.lng],circleOptions).bindPopup(popUp))
+        else if (surveyData.age == "65-69") {
+            sixtynine.addLayer(marker1)
+            // addImage(surveyData.lat,surveyData.lng,surveyData.age,surveyData.gender)
         }
         else {
-            overseventy.addLayer(L.circleMarker([data.lat,data.lng],circleOptions).bindPopup(popUp))
+            overseventy.addLayer(marker1)
+            // addImage(surveyData.lat,surveyData.lng,surveyData.age,surveyData.gender)
         }
-       
-        return data   
+      
+        return surveyData   
 }
 
 function createButtons(lat,lng,data){
@@ -351,10 +435,13 @@ function createButtons(lat,lng,data){
     newDiv.setAttribute("data-step",newDiv.id) // add a data-step for the button id to know which step we are on
     newDiv.setAttribute("lat",lat); // sets the latitude 
     newDiv.setAttribute("lng",lng); // sets the longitude 
+// merging from here
     newDiv.setAttribute("age", cleanage);
+
     newDiv.setAttribute("Asian_American", data.iden);
     newDiv.setAttribute("Gender",data.gender);
     newDiv.setAttribute("Afraid", data.fear);
+// merging end here
     newDiv.addEventListener('click', function(){
         map.flyTo([lat,lng], 15, 
             { pan: {
@@ -368,8 +455,6 @@ function createButtons(lat,lng,data){
     const spaceForButtons = document.getElementById('contents')
     spaceForButtons.appendChild(newDiv);//this adds the button to our page.
 }
-
-// let total_stories = document.getElementById('contents').children;
 
 let allLayers;
 let testLayer;
@@ -393,10 +478,12 @@ function formatData(theData){
         formattedData.forEach(addMarker)    
         testLayer = overseventy;
         allLayers = L.featureGroup([under59, sixtyfour, sixtynine, overseventy]);
+        thePoints = turf.featureCollection(allPoints)
+        getBoundary(boundaryLayer)
         mcg.addTo(map)
         // console.log(allLayers)
         allLayers.addTo(map)
-        map.fitBounds(allLayers.getBounds()); 
+        // map.fitBounds(allLayers.getBounds()); 
        
         //popup?
         if (lastVisited == null || lastVisited == 'false') {
@@ -424,29 +511,24 @@ function formatData(theData){
             // steps out of a div to know what story they are on.
         });
 }
-
 function scrollStepper(thisStep){
     // optional: console log the step data attributes:
     // console.log("you are in thisStep: "+thisStep)
     let thisLat = thisStep.lat.value
     let thisLng = thisStep.lng.value
     // tell the map to fly to this step's lat/lng pair:
-    map.flyTo([thisLat,thisLng]
-        );
+    // fix this later:
+    // map.flyTo([thisLat,thisLng] ,{ 
+    //     pan: {
+    //     animate: false,
+    //     duration: 0.1
+    //     }
+    // }
+    //     );
 }
-let layers = {
-
-	'<i style="background: green; border-radius: 50%;"></i> Under 59 yrs old ': under59,
-	'<i style="background: red; border-radius: 50%;"></i> 60-64 yrs old': sixtyfour,
-    '<i style="background: purple; border-radius: 50%;"></i>65-69 yrs old': sixtynine,
-	'<i style="background: blue; border-radius: 50%;"></i> Over 70 yrs old': overseventy
-}
-
-L.control.layers(null,layers,{collapsed: false}).addTo(map)
 
 
-
-function startModal() {
+function startModal(){
 
     var modal = document.getElementById("myModal");
 
@@ -463,6 +545,8 @@ function startModal() {
     document.getElementById("myBtn").onclick = function() {
         modal.style.display = "block";};
     
+
+    
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
       modal.style.display = "none";
@@ -475,7 +559,38 @@ function startModal() {
       }
     }
 }
+// setup resize event for scrollama incase someone wants to resize the page...
+window.addEventListener("resize", scroller.resize);
+  
+new L.SwoopyArrow([37.718590, -125.311178], [38.891033,-121.529358], {
+    label: '(NorCal)',
+    labelFontSize: 20,
+    labelClassName: 'swoopy-arrow',
+    arrowFilled: true,
+    opacity: 1,
+    minZoom: 2,
+    maxZoom: 10,
+    factor: .6,
+    iconAnchor: [75, 5],
+    iconSize: [85, 16],
+    weight: 2
+  }).addTo(map);
 
+  new L.SwoopyArrow([32.953368, -121.492700], [34.125448,-117.227158], {
+    label: '(SoCal)',
+    labelFontSize: 20,
+    labelClassName: 'swoopy-arrow',
+    arrowFilled: true,
+    opacity: 1,
+    minZoom: 2,
+    maxZoom: 10,
+    factor: .6,
+    iconAnchor: [75, 5],
+    iconSize: [85, 16],
+    weight: 2
+  }).addTo(map);
+
+  
 let i = 0; 
 let filtered_stories;
 function search() {
@@ -519,5 +634,3 @@ function prev() {
 }
 // setup resize event for scrollama incase someone wants to resize the page...
 window.addEventListener("resize", scroller.resize);
-
-

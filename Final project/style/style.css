@@ -227,6 +227,19 @@ grid-row: 6;
   line-height: 24px;
   color: #555;
 }
+
+/*
+
+#legend{
+  grid-column: 4;
+  grid-row: 1;
+  align-items: right;
+  justify-items: right;
+  z-index: 9999;
+  padding:9px;
+  display:none;
+  background: white;
+} */
 i {
   width: 12px;
   height: 12px;
@@ -244,5 +257,29 @@ i.icon {
   display: all;
 }
 
+
+#survey {
+  overflow: hidden;
+  /* 16:9 aspect ratio */
+  padding-top: 0%;
+  width: 1250px;
+  position: relative;
+  height: 700px;
+}
+
+#BtnSurvey {
+  position: absolute;
+  top: 10px;
+  right: 275px;
+
+}
+#survey iframe {
+ border: 0;
+ height: 100%;
+ left: 0;
+ position: absolute;
+ top: 0;
+ width: 100%;
+}
 /* Buttons */
 
