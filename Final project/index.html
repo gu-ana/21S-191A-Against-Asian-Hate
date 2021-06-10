@@ -63,29 +63,30 @@
     </head>
 
     <body>
-
-        <!-- <header> <h2> Against Asian American Hate  </h2></header> -->
-        <!-- <theheader><h2>Against Asian Hate</h2> <button id="myBtn"> Click Here to Share Your Story! </button>        <a href="https://github.com/rachan2023/21S-191A-Against-Asian-Hate/blob/main/README.md"><button>About The Project</button></a>
-        </theheader> -->
         <div class="theHeader">
             <h2>Against Asian Hate</h2> 
-            <div id = "BtnSurvey"> 
+            <div id="google_translate_element"></div>
+                <script type="text/javascript">
+            function googleTranslateElementInit() {
+                new google.translate.TranslateElement(
+                    {pageLanguage: 'en'},
+                     'google_translate_element');
+            }
+            </script>
+            <div id = "survey"> 
                 <a href="survey.html"><button> Survey </button></a>
-            </div>
-            <div>
-                <button id="myBtn" onclick='startModal()'> Click Here to Share Your Story! </button> 
             </div>
             <div>
                 <a href="about.html"><button>About the Against Asian Hate Project</button></a>
             </div>   
         </div>
     
-           
         <div class='wrapper'>
-            <div id="map">
+            <div class=map id="map">
                 <div id="recenter">
-                    <button class="button" id='recenter_btn' onclick="recenter()"> Recenter Map</button>
+                    <button class="button" onclick="recenter()"> Recenter Map </button>
                 </div>
+
                 <div id="legend">
                     <div> 
                         <svg height="10" width="10">
@@ -114,10 +115,10 @@
                         </svg> 
                         > 70 Years Old 
                     </div>	
-    
                 </div>
             </div> 
-            </div>
+            
+            <script src="https://unpkg.com/leaflet-swoopy"></script>
             <script src="js/init.js"> </script>
             <div class='filter'>
                 <p> Show me a story of someone who is  
@@ -139,6 +140,7 @@
                         <option disabled selected value> -- Gender --</option>
                         <option value='Woman'> a woman </option>   
                         <option value='not_woman'> not a woman</option> 
+                        <option value='Non-binary'>non-binary</option>
                     </select>
                     and 
                     <select id='asian_american'>
@@ -157,51 +159,30 @@
                 
                 <a href="#" onclick='prev()' class="previous">&laquo; Previous</a>
                 <a href="#" class="next" onclick='next()'>Next &raquo;</a>
-                
                 <div id='contents'>
+                    <div id='no_result'>
+                        <h3> No particular individual matches your selection, please try another combination.  </h3>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div>
-            <canvas id='North'></canvas>
-        </div>
-
-        <div>
-            <canvas id='South'></canvas>
-        </div>
-        
-        <script src="js/gauge.js"></script>
-
-        <div id="google_translate_element"></div>
-                <script type="text/javascript">
-            function googleTranslateElementInit() {
-                new google.translate.TranslateElement(
-                    {pageLanguage: 'en'},
-                     'google_translate_element');
-            }
-            </script>
-        
+            <div class='gauge_wrapper'>
+                    <h2 id='gauge_title'> Number of people who reported they were fearful per region:</h2>
+                    <h3 id='gauge_norcal'> Norcal</h3>
+                    <canvas id='North'></canvas>
+                    <h4 id='North_desc'> 2 / 7</h4>
+                    <h3 id='gauge_socal'> Socal</h3>
+                    <canvas id='South'></canvas>
+                    <h4 id='South_desc'> 4 / 8</h4>
+                <script src="js/gauge.js"></script>
+            </div>
         </div>
         <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"> </script>
 
         </div>
-        <!-- <script src="js/stopwords.js"></script> -->
-        <script src="https://unpkg.com/leaflet-swoopy"></script>
-        
-        
+            
          <!-- Trigger/Open The Modal -->
         <button id="myBtn" style="display:none"> Click Here to Share Your Story! </button>
-        <!-- <button id="Aboutbtn" onclick="myFunction()">About The Project!</button> -->
-        <!-- <button onclick="window.location='https://github.com/rachan2023/21S-191A-Against-Asian-Hate/blob/main/README.md';">About The Project</button> -->
-
-        
-        <!-- <button id="Aboutbtn"> About </button> -->
-        <!-- <button id= "turnOff59"> <i style="background: green; border-radius: 50%;"></i> Under 59 years old </button> -->
-        <!-- <button id= "turnOff59"> <i style="background: red; border-radius: 50%;"></i> 60-64 years old</button>
-        <button id= "turnOff59"> <i style="background: blue; border-radius: 50%;"></i> 65-69 years old</button>
-        <button id= "turnOff59"> <i style="background: purple; border-radius: 50%;"></i> Over 70 years old</button> -->
-        <!-- The Modal -->
         <div id="myModal" class="modal">
 
             <!-- Modal content -->
@@ -233,5 +214,4 @@
             </div>
         </div> 
     </body>
->>>>>>> c0c827e300f3f5dcccf576c78ced540bb815c526
 </html>

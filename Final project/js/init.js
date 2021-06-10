@@ -1,18 +1,5 @@
-
-// import stopwords from "./stopwords.js"
-// import 'leaflet-swoopy';
-
 const map = L.map('map');
  
-// create leaflet map ...
-
-// let CartoDB_PositronNoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-// 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-// 	subdomains: 'abcd',
-// 	maxZoom: 19
-// });
-
-// CartoDB_PositronNoLabels.addTo(map)
 
 let Esri_WorldGrayCanvas = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
 	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
@@ -21,8 +8,9 @@ let Esri_WorldGrayCanvas = L.tileLayer('https://server.arcgisonline.com/ArcGIS/r
 
 Esri_WorldGrayCanvas.addTo(map)
 
-
-
+//this is for filtering stories per card
+let i = 0; 
+let filtered_stories;
 
 
 // create a new global scoped variable called 'scroller'
@@ -47,7 +35,6 @@ fetch(url)
 		return response.json();
 		})
     .then(data =>{
-                console.log(data)
                 formatData(data)
         }
 )
@@ -63,23 +50,6 @@ let circleOptions = {
 
 let boundaryLayer = "./data/CA_boundaries.geojson"
 
-function countiesF() {
-    // have the map show counties that are fearful
-}
-
-// function toggleBoundaries(flag){
-//     if (flag == "zip"){
-//     boundaryLayer = "./data/counties.geojson"
-//     getBoundary(boundaryLayer)
-//     }
-//     if (flag == "counties"){
-//         boundaryLayer = "./data/zipcode.geojson"
-//         getBoundary(boundaryLayer)
-//     }
-//     else{
-
-//     }
-// }
 
 let boundary;
 let ptsWithin;
@@ -92,90 +62,86 @@ let headers = {
     choice3: "Asian American Pacific Islander"
 }
 
-// let layers = {
-//     '<i style="background: green; border-radius: 50%;"></i> < 59 Years Old ': under59,
-//     '<i style="background: red; border-radius: 50%;"></i> 60-64 Years Old': sixtyfour,
-//     '<i style="background: purple; border-radius: 50%;"></i> 65-69 Years Old': sixtynine,
-//     '<i style="background: blue; border-radius: 50%;"></i> 70+ Years Old': overseventy
-// }
-
 let flag;
 
 function toggleLegend(flag){
     let target = document.getElementById("legend")
     if (!flag) {
         target.style.display = "inline";
-        console.log('flag:')
-        console.log(flag)
         flag = 1
         return flag
     }
     if (flag) {
         target.style.display = "none";
-        console.log('flag:')
-        console.log(flag)
         // target.setAttribute("style", "display: none")
         flag = 0
         return flag
     }
 }
+
 let onPolyClick = function(event,header){
     console.log('click!')
     toggleLegend(flag)
     
-    // if (!map.hasLayer(layers)) {
-    //     L.control.layers(null,layers,{collapsed: false}).addTo(map)
-    // }
-    
-
-    //callFancyboxIframe('flrs.html')
-    console.log(event.layer.feature.properties.values)
     let regionFeatures = event.layer.feature.properties.values
+    console.log(regionFeatures)
     const placeHolder = document.getElementById('contents')
     placeHolder.innerHTML = ""
     let thisLayer = L.featureGroup();
-    
     regionFeatures.forEach(data=>{ 
         let feature = subset_region(data,headers);
         thisLayer.addLayer(L.circleMarker([feature.lat,feature.lng],circleOptions))
       })
-    console.log('theseFeatures')
-    console.log(thisLayer)
     map.fitBounds(thisLayer.getBounds())
-    // var label = event.target.options.label;
-    // var content = event.target.options.popup;
-    // var otherStuff = event.target.options.otherStuff;
-    // alert("Clicked on polygon with label:" +label +" and content:" +content +". Also otherStuff set to:" +otherStuff);
-};
+    
+    let gauge_page = document.getElementsByClassName('gauge_wrapper');
+    gauge_page[0].style.display = 'none';
+    let stories = document.getElementsByClassName('story_wrapper');
+    stories[0].style.display = 'grid';
 
-function subset_region(subData,cardHeaders) {
-    const targetDiv = document.createElement("div"); // adds a new button
-    console.log(('subData'))
-    console.log((subData))
-    // let cardContent = subData
-    let header;
-    if (subData.gender != "Woman" && subData.age == "under 59") {
-        header = cardHeaders.choice3
+    filtered_stories = document.getElementById('contents').children
+    let j;
+    for (j = 0; j < filtered_stories.length; j++) {
+        filtered_stories[j].style.display = 'none';
     }
-    else if (subData.gender == "Woman" && subData.age == "under 59") {
-        header = cardHeaders.choice2
+
+    if(filtered_stories.length > 0) {
+        filtered_stories[0].style.display = 'block';
     }
     else {
-        header = cardHeaders.choice1
+        const get_div = document.getElementById('no_result');
+        if (get_div != null) {
+            get_div.style.display = 'block';
+        }
     }
-    let cardContent =  `<h2> ${header} </h2> <div class='story'> <p> Age: ${subData.age} </p> <p> Location: ${subData.city} </p> <p> Asian American/Pacific Islander: ${subData.iden} </p> <p> Gender identity: ${subData.gender} </p> <p>Fearful of going outside: ${subData.fear} </p>  Story: ${subData.story}</div>`
-    targetDiv.innerHTML = cardContent; // gives it the HTML content
-    targetDiv.setAttribute("class","story") // add the class called "step" to the button or div
-    // targetDiv.setAttribute("data-step",newDiv.id) // add a data-step for the button id to know which step we are on
-    // newDiv.setAttribute("lat",lat); // sets the latitude 
-    // newDiv.setAttribute("lng",lng); // sets the longitude
-    const placeHolder = document.getElementById('contents')
-    console.log("placholder"+placeHolder)
-    // placeHolder.innerHTML.replace(targetDiv)
-    placeHolder.innerHTML += cardContent;
-    console.log('targetDiv')
-    console.log(targetDiv)
-    return subData
+
+};
+
+function subset_region(data,cardHeaders) {
+    const newDiv = document.createElement("div"); // adds a new button
+    
+    let cleanage = data.age.replace(/ /g, '');
+    let cardContent =  ` <div class='story'> <h3> Their Story: </h3> Story: ${data.story} <p> Age: ${data.age} </p> <p> Asian Pacific Islander: ${data.iden} </p> <p> Gender identity: ${data.gender} </p> <p>Fearful of going outside: ${data.fear} </p>  </div>`
+    newDiv.innerHTML = cardContent; // gives it the HTML content
+    newDiv.setAttribute("class","card_" + cleanage); // add the class called "step" to the button or div
+    newDiv.setAttribute("data-step",newDiv.id) // add a data-step for the button id to know which step we are on
+    newDiv.setAttribute("age", cleanage);
+    newDiv.setAttribute("Asian_American", data.iden);
+    newDiv.setAttribute("Gender",data.gender);
+    newDiv.setAttribute("Afraid", data.fear);
+    // newDiv.addEventListener('click', function(){
+    //     map.flyTo([lat,lng], 15, 
+    //         { pan: {
+    //             animate: false,
+    //             duration: 0.1
+    //         }
+    //         }
+    //         ); //this is the flyTo from Leaflet
+
+    // })
+    const spaceForButtons = document.getElementById('contents')
+    spaceForButtons.appendChild(newDiv);//this adds the button to our page.
+    return data;
 }
 
 function getStyles(data){
@@ -189,30 +155,16 @@ function getStyles(data){
 }
 
 function onEachFeature(feature, layer) {
-    // does this feature have a property named popupContent?
+
     console.log(feature.properties)
     if (feature.properties.values) {
         console.log(feature.properties.values)
         let count = feature.properties.values
-        //call function to parse out data based on values inside the boundary
-        // feature.properties.values.forEach(data=>{ 
-        //     let runningCount = subset_region(data,headers);
-        //   })
-        // subset_region(feature)
-
-        // console.log(count)
         let text = count.toString()
         // layer.bindPopup(text);
         console.log('layer')
         console.log(layer)
         console.log(layer.feature.properties.values)
-        // layer.on({
-        //     // mouseover: highlightFeature,
-        //     // mouseout: resetHighlight,
-        //     // click: subset_region(layer,headers)
-        //     click: layer.bindPopup(layer.feature.properties.values);
-        //     // layer.bindPopup(`<strong>State: </strong>`+clickName+`<br>`+`<strong>Number of incidents reported: </strong>`+reportSum)
-        // });
     }
 }
 
@@ -230,24 +182,13 @@ function getBoundary(layer){
         })
     .then(data =>{
                 boundary = data
-                console.log('data:')
-                console.log(data)
                 collected = turf.collect(boundary, thePoints, 'surveyData', 'values');
                 
-                // collected = turf.buffer(thePoints, 50,{units:'miles'});
                 console.log(collected.features)
                 let boundaryJson = L.geoJson(collected,{onEachFeature: onEachFeature,style:function(feature)
                 {
-                    console.log('feature.properties.values.Region')
-                    // console.log(feature.properties.Region)
                     let thisRegion = feature.properties.Region
                     return {color: regionColors[thisRegion]}    
-                    // if (thisRegion == 'SoCal') {
-                    //     return {color: "aqua"};
-                    // }
-                    // else{
-                    //     return{color: "green"}
-                    // }
                 }
                 
                     }).on('click',onPolyClick).addTo(map)    
@@ -275,12 +216,6 @@ function getBoundary2(layer){
                     // console.log(feature.properties.Region)
                     let thisRegion = feature.properties.Region
                     return {color: regionColors[thisRegion]}    
-                    // if (thisRegion == 'SoCal') {
-                    //     return {color: "aqua"};
-                    // }
-                    // else{
-                    //     return{color: "green"}
-                    // }
                 }})
         
                 map.fitBounds(boundaryJson.getBounds()); 
@@ -305,12 +240,11 @@ function getDistinctValues(targetField){
 }
 
 function recenter() {
-    // map.flyTo([37.5, -119.1], 6 ,{
-    //     pan: {
-    //         animate: true,
-    //         duration: 0.1
-    //     }
-    // });
+    let gauge_page = document.getElementsByClassName('gauge_wrapper');
+    gauge_page[0].style.display = 'grid';
+    let stories = document.getElementsByClassName('story_wrapper');
+    stories[0].style.display = 'none';
+
     flag = 1
     toggleLegend(flag)
     flag = 0
@@ -318,32 +252,6 @@ function recenter() {
     getBoundary2(boundaryLayer)
 }
 
-
-// function addImage(lat, lng, age, gender){
-//     // switch(title){
-//     //     case 'Los Angeles, CA': img = './pictures/UCLA.jpg';
-//     //         break;
-//     //     case 'West Lafayette, IN': img = './pictures/Purdue.jpg';
-//     //         break;
-//     //     case 'Houston, TX': img = './pictures/Houston.jpg';
-//     //         break;
-//     // }
-
-//     if(age == "under 59" && gender == "Woman") {
-//         img = './pictures/woman.png'
-//     }
-
-//     else if (age != "under 59" && gender == "Woman") {
-//         img = './pictures/elderly_woman.jpg'
-//     }
-
-//     else {
-//         img = './pictures/man.png'
-//     }
-
-//     L.popup().setLatLng([lat, lng]).setContent('<img src=' + img + ' width=105 height=105/><p>').openOn(map);
-    
-// }
 
 function addMarker(thisData){
         // let story = data.ifpossiblepleaseelaborateaboutwhyyouarefearful.
@@ -381,7 +289,7 @@ function addMarker(thisData){
 
         }
         // console.log(data)
-        // createButtons(surveyData.lat,surveyData.lng, surveyData)
+        createButtons(surveyData.lat,surveyData.lng, surveyData)
         getDistinctValues(surveyData.age)
         let fear = thisData.areyoufearfulofgoingoutsideduetotheriseofasianamericanhatecrimes
         let thisPoint = turf.point([Number(surveyData.lng),Number(surveyData.lat)],{surveyData})
@@ -395,7 +303,7 @@ function addMarker(thisData){
         circleOptions.fillColor = colorArray[myFieldArray.indexOf(surveyData.age)]
         // console.log("age")
         // console.log(data.age)
-        let popUp = `<h2>${surveyData.gender}</h2>`
+        let popUp = `<h2>${surveyData.gender} ${surveyData.city}  ${surveyData.zip} </h2>`
         // addImage(surveyData.lat,surveyData.lng,surveyData.age,surveyData.gender)
 
         var marker1 = L.circleMarker([surveyData.lat,surveyData.lng],circleOptions).bindPopup(popUp)
@@ -437,7 +345,6 @@ function createButtons(lat,lng,data){
     newDiv.setAttribute("lng",lng); // sets the longitude 
 // merging from here
     newDiv.setAttribute("age", cleanage);
-
     newDiv.setAttribute("Asian_American", data.iden);
     newDiv.setAttribute("Gender",data.gender);
     newDiv.setAttribute("Afraid", data.fear);
@@ -563,7 +470,7 @@ function startModal(){
 window.addEventListener("resize", scroller.resize);
   
 new L.SwoopyArrow([37.718590, -125.311178], [38.891033,-121.529358], {
-    label: '(NorCal)',
+    label: '(Click on NorCal)',
     labelFontSize: 20,
     labelClassName: 'swoopy-arrow',
     arrowFilled: true,
@@ -577,7 +484,7 @@ new L.SwoopyArrow([37.718590, -125.311178], [38.891033,-121.529358], {
   }).addTo(map);
 
   new L.SwoopyArrow([32.953368, -121.492700], [34.125448,-117.227158], {
-    label: '(SoCal)',
+    label: '(Click on SoCal)',
     labelFontSize: 20,
     labelClassName: 'swoopy-arrow',
     arrowFilled: true,
@@ -590,9 +497,7 @@ new L.SwoopyArrow([37.718590, -125.311178], [38.891033,-121.529358], {
     weight: 2
   }).addTo(map);
 
-  
-let i = 0; 
-let filtered_stories;
+
 function search() {
 
    let stories = document.getElementById('contents').children
@@ -600,7 +505,10 @@ function search() {
    let age = document.getElementById('age_range').value;
    let gender = document.getElementById('gender').value;
    let fearful = document.getElementById('fearful').value;
-
+   let gauge_page = document.getElementsByClassName('gauge_wrapper');
+   gauge_page[0].style.display = 'none';
+   let story_wrapper = document.getElementsByClassName('story_wrapper');
+    story_wrapper[0].style.display = 'grid';
    for (const story of stories) {
        story.style.display = 'none';
    }
@@ -610,8 +518,26 @@ function search() {
    console.log(age)
    console.log(gender)
    filtered_stories = document.querySelectorAll(`[asian_american=${asian_american}][gender=${gender}][afraid=${fearful}][age=${age}]`);
-
-   filtered_stories[0].style.display = 'block';
+   if(filtered_stories.length > 0) {
+        filtered_stories[0].style.display = 'block';
+        lat = filtered_stories[0].getAttribute('lat');
+        lng = filtered_stories[0].getAttribute('lng');
+        map.flyTo([lat,lng], 15, 
+            { pan: {
+                animate: false,
+                duration: 0.1
+            }
+            }
+            );
+   }
+   else {
+    const get_div = document.getElementById('no_result');
+    if (get_div != null) {
+        get_div.style.display = 'block';
+    }
+    console.log(get_div);
+   }
+   
    return filtered_stories;
 }
 
@@ -621,6 +547,15 @@ function next() {
         filtered_stories[i].style.display = 'none';
         i = i + 1;
         filtered_stories[i].style.display = 'block';
+        lat = filtered_stories[i].getAttribute('lat');
+        lng = filtered_stories[i].getAttribute('lng');
+        map.flyTo([lat,lng], 15, 
+            { pan: {
+                animate: false,
+                duration: 0.1
+            }
+            }
+            );
     }
     
 }
@@ -630,6 +565,15 @@ function prev() {
         filtered_stories[i].style.display = 'none';
         i = i - 1;
         filtered_stories[i].style.display = 'block';
+        at = filtered_stories[i].getAttribute('lat');
+        lng = filtered_stories[i].getAttribute('lng');
+        map.flyTo([lat,lng], 15, 
+            { pan: {
+                animate: false,
+                duration: 0.1
+            }
+            }
+            );
     }
 }
 // setup resize event for scrollama incase someone wants to resize the page...
