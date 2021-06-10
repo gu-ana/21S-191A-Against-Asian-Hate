@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -7,9 +8,9 @@
         <link rel="stylesheet" href="style/style.css">
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
 
         <!-- Leaflet's css-->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -28,26 +29,84 @@
         
         <!-- scrollama -->
         <script src='./js/scrollama.js'></script>
+
+        <script src='https://unpkg.com/@turf/turf@6.3.0/turf.min.js'></script>
+
+        <!-- bring in tagcloud -->
+        <script type="text/javascript" src="js/TagCloud.min.js"></script> 
+
+        <link rel="stylesheet" type="text/css" href="slick/slick.css"/>
+     
+        <link rel="stylesheet" type="text/css" href="slick/slick-theme.css"/>
         
     </head>
     <body>
-        <div id="map"></div> 
-        <div id="theHeader"><h2>Against Asian Hate</h2> 
-            <div>
-                <button id='recenter' onclick="recenter()"> Recenter </button>
-            </div>
-            <div>
-                <button id="myBtn" onclick='startModal()'> Click Here to Share Your Story! </button> 
-            </div>   
-            <div>
-                <a href="about.html"><button>About the Against Asian Hate Project</button></a>
-            </div>   
-        </div>  
-        <div id = "contents"></div>
-        <div id='filter'> filter </div>
-
-        <script src="js/init.js"></script>
         
+        <div class="theHeader"><h2>Against Asian Hate</h2> 
+            <div id="recenter">
+                <button onclick="recenter()"> Recenter </button>
+            </div>
+
+            <div>
+            <button id="myBtn" onclick='startModal()'> Click Here to Share Your Story! </button> 
+            </div>
+
+            <div>
+            <a href="about.html"><button>About the Against Asian Hate Project</button></a>
+            </div>   
+            
+        </div>  
+
+        <div class='wrapper'>
+            <div class="map" id='map'>
+                
+            </div> 
+            <script src="js/init.js"> </script>
+            <div class='filter'>
+                <p> Show me a story of someone who is  
+                    <select id='fearful'>
+                        <option disabled selected value> -- fearful --</option>
+                        <option value='Yes'> fearful </option>   
+                        <option value='No'> not fearful </option> 
+                    </select>
+                    within the 
+                    <select id='age_range'>
+                        <option disabled selected value> -- Age Range --</option>
+                        <option value='under59'> under 59 </option>   
+                        <option value='60-64'> 60 - 64 </option> 
+                        <option value='65-69'> 65 - 69 </option>   
+                        <option value='70orolder'> over 70 </option> 
+                    </select>
+                    that is 
+                    <select id='gender'>
+                        <option disabled selected value> -- Gender --</option>
+                        <option value='Woman'> a woman </option>   
+                        <option value='not_woman'> not a woman</option> 
+                    </select>
+                    and 
+                    <select id='asian_american'>
+                        <option disabled> -- Asian American -- </option>
+                        <option value='Yes'> Asian American/Pacific Islander </option>   
+                        <option value='No'> not an Asian American/Pacific Islander </option> 
+                    </select>
+                    during the COVID-19 Pandemic.
+                    </p>
+    
+                    <div id='filter_search'>
+                        <button onclick='search()'> Search </button>
+                    </div>     
+            </div>
+            <div class='story_wrapper'>
+                
+                <a href="#" onclick='prev()' class="previous">&laquo; Previous</a>
+                <a href="#" class="next" onclick='next()'>Next &raquo;</a>
+                
+                <div id='contents'>
+                </div>
+                
+            </div>
+            
+        </div>
          <!-- Trigger/Open The Modal -->
         <button id="myBtn" style="display:none"> Click Here to Share Your Story! </button>
         <div id="myModal" class="modal">
@@ -56,14 +115,25 @@
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <div class="modal-header">
-                    <h4 class="modal-title"><p> Against Asian Hate Project </p> <p> 反对亚洲仇恨计划</p></h4>
+                    <h4 class="modal-title">
+                        <p> Against Asian Hate Project </p> 
+                        <p> 反对亚洲仇恨计划</p></h4>
                 </div>
                 
                 <div class="modal-body">
+                    <!-- <button type="button" class="btn btn-default" data-dismiss="modal" onclick="document.location='https://forms.office.com/Pages/ResponsePage.aspx?id=oCI8t5lRfEaZh-gKKc_PzzQmZK6zAABOhTEbC6ytzpBUQ1BQQlJVVk9STDFOV1lRT0JETEhOSkRHWi4u'"> English </button> -->
+                    <!-- <button onclick="document.location='https://forms.office.com/Pages/ResponsePage.aspx?id=oCI8t5lRfEaZh-gKKc_PzzQmZK6zAABOhTEbC6ytzpBUQ1BQQlJVVk9STDFOV1lRT0JETEhOSkRHWi4u'">HTML Tutorial</button> -->
+                    <!-- <button type="button" class="btn btn-default" data-dismiss="modal" onclick="document.location='https://forms.office.com/Pages/ResponsePage.aspx?id=oCI8t5lRfEaZh-gKKc_PzzQmZK6zAABOhTEbC6ytzpBUQ1BQQlJVVk9STDFOV1lRT0JETEhOSkRHWi4u&lang=zh-cn'"> 中文 </button>  -->
                     <p> With the onset of the COVID-19 pandemic, there has been a recent spike in Asian American hate crimes especially in the United States. We seek to document those instances of Asian American hate crimes in California, specifically focusing on Asian American elderly and women. The goal is to shine light on this epidemic of violence, abuse, and injustice towards elderly and women of Asian Pacific Island background. In the long-term, we hope that this platform will be used by community members to share their stories and feelings without any repercussions. </p>
                     <p> 随着COVID-19大流行的爆发，最近美国亚裔的仇恨犯罪事件数量继续上升。我们力求记录在加利福尼亚州发生的美国亚裔仇恨犯罪事件，特别是针对亚裔老人与妇女。目的是阐明这种对亚太岛屿背景的老年人和妇女的暴力，虐待和不公正现象。从长远来看，我们希望社区成员可以使用该平台来分享他们的故事和感受，而不会造成任何影响。</p>
                 </div>
+                <!-- Button doesn't work :( -->
                 <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-default" data-dismiss="modal"> Proceed to English</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"> 
+                        继续中文</button>
+                        <a href="index.html"> Index </a> 
+                        <a href="about.html"> About </a>  -->
                      <button type="button" class="btn btn-default" onclick="document.getElementById('myModal').style.display='none'"> Proceed to English </button> 
                      <button type="button" class="btn btn-default" data-dismiss="modal" onclick="document.location= 'Chinese.html'"> 进入中文版 </button> 
                      <button type="button" class="btn btn-default" onclick="document.getElementById('myModal').style.display='none'" >Close</button>
